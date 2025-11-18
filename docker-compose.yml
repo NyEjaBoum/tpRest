@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:5.7
+    container_name: tprest_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: tprestdb
+      MYSQL_USER: tpuser
+      MYSQL_PASSWORD: tppass
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./scriptNyeja.sql:/docker-entrypoint-initdb.d/scriptNyeja.sql:ro
+
+  builder:
+    image: maven:3.9.4-eclipse-temurin-17
+    working_dir: /workspace
+    volumes:
+      - ./:/workspace
+    command: mvn -B -DskipTests package
+    depends_on:
+      - db
+    restart: "no"
+
+  app:
+    image: eclipse-temurin:17-jre
+    working_dir: /workspace
+    volumes:
+      - ./:/workspace
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+      - builder
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/tprestdb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: tpuser
+      SPRING_DATASOURCE_PASSWORD: tppass
+      SPRING_JPA_HIBERNATE_DDL_AUTO: none
+    entrypoint: ["sh", "-c", "while [ ! -f /workspace/target/*.war ]; do echo 'Waiting for build...'; sleep 2; done; java -jar /workspace/target/*.war"]
+
+volumes:
+  db_data:

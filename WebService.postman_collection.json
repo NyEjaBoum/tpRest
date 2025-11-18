@@ -1,0 +1,168 @@
+{
+	"info": {
+		"_postman_id": "a02a8dbc-d92c-4a43-80ce-4359fde065f3",
+		"name": "WebService",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "45465200",
+		"_collection_link": "https://nyeja-3686661.postman.co/workspace/22dd98b2-1ced-4032-8ef9-7ebac1bfd0dd/collection/45465200-a02a8dbc-d92c-4a43-80ce-4359fde065f3?action=share&source=collection_link&creator=45465200"
+	},
+	"item": [
+		{
+			"name": "NoteSemestre",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/notes/semestres/1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"notes",
+						"semestres",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NoteAnnee",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/notes/annees/1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"notes",
+						"annees",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ListeEtudiants",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/etudiants",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"etudiants"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "EtudiantSemestre",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/etudiants/semestre/1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"etudiants",
+						"semestre",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NoteEtudiants",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/etudiants/1/notes",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"etudiants",
+						"1",
+						"notes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Matiere",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/matiere/1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"matiere",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NoteMatiere",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/matiere/1/notes",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"matiere",
+						"1",
+						"notes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NoteEtudiant",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/etudiant/1/notes",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"etudiant",
+						"1",
+						"notes"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -1,33 +1,36 @@
 package com.example.tpRest.service;
 
+import com.example.tpRest.model.Matiere;
 import com.example.tpRest.model.Note;
+import com.example.tpRest.repository.MatiereRepository;
 import com.example.tpRest.repository.NoteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class NoteService {
+public class MatiereService {
 
+    private final MatiereRepository matiereRepository;
     private final NoteRepository noteRepository;
 
-    public Map<String, Object> getNotesBySemestre(Integer semestreId) {
+    public Map<String, Object> getMatiere(Integer id) {
         Map<String, Object> resp = new HashMap<>();
         try {
-            List<Note> notes = noteRepository.findNotesBySemestreId(semestreId);
-            if (notes == null || notes.isEmpty()) {
+            Matiere m = matiereRepository.findById(id).orElse(null);
+            if (m == null) {
                 resp.put("status", "error");
                 resp.put("data", null);
-                resp.put("error", Map.of("code", "E_NOT_FOUND", "message", "Aucune note trouvée pour ce semestre"));
+                resp.put("error", Map.of("code", "E_NOT_FOUND", "message", "Matiere non trouvée"));
                 return resp;
             }
-
             resp.put("status", "success");
-            resp.put("data", notes);
+            resp.put("data", m);
             resp.put("error", null);
             return resp;
         } catch (DataAccessException dex) {
@@ -43,22 +46,18 @@ public class NoteService {
         }
     }
 
-    public Map<String, Object> getNotesByAnnee(Integer anneeId) {
+    public Map<String, Object> getNotesByMatiere(Integer id) {
         Map<String, Object> resp = new HashMap<>();
         try {
-            List<Note> notes = noteRepository.findNotesByAnneeId(anneeId);
+            List<Note> notes = noteRepository.findNotesByMatiereId(id);
             if (notes == null || notes.isEmpty()) {
                 resp.put("status", "error");
                 resp.put("data", null);
-                resp.put("error", Map.of("code", "E_NOT_FOUND", "message", "Aucune note trouvée pour cette année"));
+                resp.put("error", Map.of("code", "E_NOT_FOUND", "message", "Aucune note trouvée pour cette matiere"));
                 return resp;
             }
-
-            Map<String, List<Note>> grouped = notes.stream()
-                .collect(Collectors.groupingBy(n -> n.getMatiere().getSemestre().getLibelle()));
-
             resp.put("status", "success");
-            resp.put("data", grouped);
+            resp.put("data", notes);
             resp.put("error", null);
             return resp;
         } catch (DataAccessException dex) {

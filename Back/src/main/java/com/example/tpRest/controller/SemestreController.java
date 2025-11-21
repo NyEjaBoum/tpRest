@@ -21,11 +21,22 @@ public class SemestreController {
 
     private final SemestreService semestreService;
 
-    
+    @GetMapping
+    public ResponseEntity<Map<String, Object>> findAll(){
+        Map<String, Object> resp = semestreService.getAllSemestres();
+        if ("error".equals(resp.get("status"))) {
+            return ResponseEntity.badRequest().body(resp);
+        }
+        return ResponseEntity.ok(resp);
+    }
 
-    @GetMapping("/semestres/{id}/etudiants-moyennes")
-    public List<Map<String, Object>> getEtudiantsMoyennes(@PathVariable Integer id) {
-        return semestreService.getEtudiantsWithMoyennesBySemestre(id);
+    @GetMapping("/{id}/etudiants-moyennes")
+    public ResponseEntity<Map<String, Object>> getEtudiantsMoyennes(@PathVariable Integer id) {
+        Map<String, Object> resp = semestreService.getEtudiantsWithMoyennesBySemestre(id);
+        if ("error".equals(resp.get("status"))) {
+            return ResponseEntity.badRequest().body(resp);
+        }
+        return ResponseEntity.ok(resp);
     }
 
 }

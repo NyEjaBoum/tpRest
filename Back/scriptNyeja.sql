@@ -1,42 +1,39 @@
+DROP DATABASE IF EXISTS notes_db;
+CREATE DATABASE notes_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE notes_db;
+
 CREATE TABLE Credit(
-   id_credit INT,
-   valeur INT NOT NULL,
-   PRIMARY KEY(id_credit)
+   id_credit INT PRIMARY KEY,
+   valeur INT NOT NULL
 );
 
 CREATE TABLE Semestre(
-   id_semestre INT,
-   libelle VARCHAR(50) NOT NULL,
-   PRIMARY KEY(id_semestre)
+   id_semestre INT PRIMARY KEY,
+   libelle VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE Filiere(
-   id_filiere INT,
-   libelle VARCHAR(50) NOT NULL,
-   PRIMARY KEY(id_filiere)
+   id_filiere INT PRIMARY KEY,
+   libelle VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE Session(
-   id_session INT,
-   PRIMARY KEY(id_session)
+   id_session INT PRIMARY KEY
 );
 
 CREATE TABLE Annee_universitaire(
-   id_annee INT,
+   id_annee INT PRIMARY KEY,
    date_debut DATE NOT NULL,
-   date_fin DATE NOT NULL,
-   PRIMARY KEY(id_annee)
+   date_fin DATE NOT NULL
 );
 
 CREATE TABLE Etudiant(
-   id_etudiant INT,
-   matricule VARCHAR(50) NOT NULL,
+   id_etudiant INT PRIMARY KEY,
+   matricule VARCHAR(50) NOT NULL UNIQUE,
    nom VARCHAR(50) NOT NULL,
    prenom VARCHAR(50) NOT NULL,
    date_inscription DATE NOT NULL,
    id_semestre INT NOT NULL,
-   PRIMARY KEY(id_etudiant),
-   UNIQUE(matricule),
    FOREIGN KEY(id_semestre) REFERENCES Semestre(id_semestre)
 );
 
@@ -46,39 +43,34 @@ CREATE TABLE UE (
 );
 
 CREATE TABLE Matiere(
-   id_matiere INT,
-   libelle VARCHAR(50) NOT NULL,
+   id_matiere INT PRIMARY KEY,
+   libelle VARCHAR(100) NOT NULL,
    id_semestre INT NOT NULL,
    id_ue INT,
    optionnel INT(1) DEFAULT 0,
-   PRIMARY KEY(id_matiere),
    FOREIGN KEY(id_semestre) REFERENCES Semestre(id_semestre),
    FOREIGN KEY(id_ue) REFERENCES UE(id_ue)
 );
 
 CREATE TABLE Inscription(
-   id_inscription INT,
+   id_inscription INT PRIMARY KEY,
    id_etudiant INT NOT NULL,
    id_annee INT NOT NULL,
    id_semestre INT NOT NULL,
-   PRIMARY KEY(id_inscription),
    FOREIGN KEY(id_etudiant) REFERENCES Etudiant(id_etudiant),
    FOREIGN KEY(id_annee) REFERENCES Annee_universitaire(id_annee),
    FOREIGN KEY(id_semestre) REFERENCES Semestre(id_semestre)
 );
 
 CREATE TABLE Note(
-   id_note INT,
+   id_note INT PRIMARY KEY,
    valeur DECIMAL(15,2) NOT NULL,
    date_insertion VARCHAR(50),
    id_inscription INT NOT NULL,
    id_matiere INT NOT NULL,
-   PRIMARY KEY(id_note),
    FOREIGN KEY(id_inscription) REFERENCES Inscription(id_inscription),
    FOREIGN KEY(id_matiere) REFERENCES Matiere(id_matiere)
 );
-
-
 
 CREATE TABLE Matiere_Credit(
    id_matiere INT,
@@ -89,7 +81,6 @@ CREATE TABLE Matiere_Credit(
    FOREIGN KEY(id_credit) REFERENCES Credit(id_credit),
    FOREIGN KEY(id_filiere) REFERENCES Filiere(id_filiere)
 );
-
 
 /* ===== Données réalistes pour la base notes_db ===== */
 
@@ -110,7 +101,7 @@ INSERT INTO Semestre (id_semestre, libelle) VALUES
 INSERT INTO Filiere (id_filiere, libelle) VALUES
 (1, 'Informatique'),
 (2, 'Design'),
-(3, 'Réseau & Télécom');
+(3, 'Reseau Telecom');
 
 /* Sessions */
 INSERT INTO Session (id_session) VALUES
@@ -122,117 +113,244 @@ INSERT INTO Annee_universitaire (id_annee, date_debut, date_fin) VALUES
 (1, '2023-09-01', '2024-07-01'),
 (2, '2024-09-01', '2025-07-01');
 
-/* Étudiants (matricules réalistes, dates d'inscription plausibles) */
+/* Étudiants */
 INSERT INTO Etudiant (id_etudiant, matricule, nom, prenom, date_inscription, id_semestre) VALUES
 (1, 'ETU2023001', 'Diallo', 'Moussa', '2023-09-10', 1),
 (2, 'ETU2023002', 'Kone', 'Awa', '2023-09-15', 1),
 (3, 'ETU2023003', 'Traore', 'Sarah', '2023-09-12', 1),
-(4, 'ETU2023004', 'Barry', 'Idriss', '2023-09-18', 1),
-(5, 'ETU2024001', 'Nguyen', 'Linh', '2024-09-05', 3),
-(6, 'ETU2024002', 'Martin', 'Paul', '2024-09-06', 3),
-(7, 'ETU2024003', 'Moreau', 'Chloe', '2024-09-08', 3),
-(8, 'ETU2024004', 'Sow', 'Fatou', '2024-09-09', 4),
-(9, 'ETU2023005', 'Camara', 'Abdoulaye', '2023-09-11', 2),
-(10,'ETU2023006', 'Bamba', 'Aminata', '2023-09-14', 2);
+(4, 'ETU2023004', 'Barry', 'Idriss', '2023-09-18', 1);
 
-/* Ajout d'UE pour chaque semestre */
+/* UE pour chaque semestre et parcours */
 INSERT INTO UE (id_ue, libelle) VALUES
-(1, 'UE Fondamentale S1'),
-(2, 'UE Fondamentale S2'),
-(3, 'UE Fondamentale S3'),
-(4, 'UE Fondamentale S4'),
-(5, 'UE Optionnelle S4');
+(1, 'UE Informatique S1'),
+(2, 'UE Math S1'),
+(3, 'UE Communication S1'),
+(4, 'UE Informatique S2'),
+(5, 'UE Math S2'),
+(6, 'UE Informatique S3'),
+(7, 'UE Math S3'),
+(8, 'UE Gestion S3'),
+(9, 'UE Option Informatique S4'),
+(10, 'UE Option Math S4'),
+(11, 'UE Projet S4'),
+(12, 'UE Web S4');
 
-/* Matières (associe chaque matière à un semestre et à une UE, optionnel si besoin) */
-/* S1 */
+/* Matières S1 */
 INSERT INTO Matiere (id_matiere, libelle, id_semestre, id_ue, optionnel) VALUES
-(1, 'Algorithmes', 1, 1, 0),
-(2, 'Programmation 1', 1, 1, 0),
-(3, 'Mathématiques discrètes', 1, 1, 0),
-(4, 'Anglais technique', 1, 1, 0),
-/* S2 */
-(5, 'Structures de données', 2, 2, 0),
-(6, 'Programmation 2', 2, 2, 0),
-(7, 'Architecture des ordinateurs', 2, 2, 0),
-(8, 'Projet encadré 1', 2, 2, 0),
-/* S3 */
-(9, 'Base de données', 3, 3, 0),
-(10,'Réseaux', 3, 3, 0),
-(11,'Systèmes d’exploitation', 3, 3, 0),
-(12,'Sécurité informatique', 3, 3, 0),
-/* S4 (avec optionnelles) */
-(13,'Développement Web', 4, 4, 0),
-(14,'Cloud & DevOps', 4, 4, 0),
-(15,'IA & Machine Learning', 4, 5, 1), -- Optionnelle
-(16,'Projet de fin d\'études', 4, 5, 1); -- Optionnelle
+(1, 'INF101 Programmation procedurale', 1, 1, 0),
+(2, 'INF104 HTML et Introduction au Web', 1, 1, 0),
+(3, 'INF107 Informatique de Base', 1, 1, 0),
+(4, 'MTH101 Arithmetique et nombres', 1, 2, 0),
+(5, 'MTH102 Analyse mathematique', 1, 2, 0),
+(6, 'ORG101 Techniques de communication', 1, 3, 0);
 
-/* Notes (valeurs plausibles 0-20, dates d'insertion réalistes) */
-/* Quelques notes par matière */
--- Exemple : Note d'Algorithmes (id_matiere=1) pour l'inscription 1 (id_inscription=1, étudiant 1, semestre 1)
+/* Matières S2 */
+INSERT INTO Matiere (id_matiere, libelle, id_semestre, id_ue, optionnel) VALUES
+(7, 'INF102 Bases de donnees relationnelles', 2, 4, 0),
+(8, 'INF103 Bases de administration systeme', 2, 4, 0),
+(9, 'INF105 Maintenance materiel et logiciel', 2, 4, 0),
+(10, 'INF106 Complements de programmation', 2, 4, 0),
+(11, 'MTH103 Calcul vectoriel et matriciel', 2, 5, 0),
+(12, 'MTH105 Probabilite et Statistique', 2, 5, 0);
 
+/* Matières S3 */
+INSERT INTO Matiere (id_matiere, libelle, id_semestre, id_ue, optionnel) VALUES
+(13, 'INF201 Programmation orientee objet', 3, 6, 0),
+(14, 'INF202 Bases de donnees objets', 3, 6, 0),
+(15, 'INF203 Programmation systeme', 3, 6, 0),
+(16, 'INF208 Reseaux informatiques', 3, 6, 0),
+(17, 'MTH201 Methodes numeriques', 3, 7, 0),
+(18, 'ORG201 Bases de gestion', 3, 8, 0);
 
-/* Inscriptions (étudiant - année - semestre) */
-/* On inscrit chaque étudiant sur les années et semestres correspondants */
+/* Matières S4 - Parcours Developpement (optionnelles marquées par 1) */
+INSERT INTO Matiere (id_matiere, libelle, id_semestre, id_ue, optionnel) VALUES
+(19, 'INF204 Systeme information geographique', 4, 9, 1),
+(20, 'INF205 Systeme information', 4, 9, 1),
+(21, 'INF206 Interface Homme Machine', 4, 9, 1),
+(22, 'INF207 Elements algorithmique', 4, 9, 0),
+(23, 'INF210 Mini projet developpement', 4, 11, 0),
+(24, 'MTH204 Geometrie', 4, 10, 1),
+(25, 'MTH205 Equations differentielles', 4, 10, 1),
+(26, 'MTH206 Optimisation', 4, 10, 1),
+(27, 'MTH203 MAO', 4, 10, 0);
+
+/* Matières S4 - Parcours BDR (optionnelles marquées par 1) */
+INSERT INTO Matiere (id_matiere, libelle, id_semestre, id_ue, optionnel) VALUES
+(28, 'INF205 Systeme information', 4, 9, 0),
+(29, 'INF204 Systeme information geographique', 4, 9, 1),
+(30, 'INF206 Interface Homme Machine', 4, 9, 1),
+(31, 'INF207 Elements algorithmique', 4, 9, 1),
+(32, 'INF211 Mini projet bases de donnees et reseaux', 4, 11, 0),
+(33, 'MTH202 Analyse des donnees', 4, 10, 1),
+(34, 'MTH205 Equations differentielles', 4, 10, 1),
+(35, 'MTH206 Optimisation', 4, 10, 1),
+(36, 'MTH203 MAO', 4, 10, 0);
+
+/* Matières S4 - Parcours Web et Design (optionnelles marquées par 1) */
+INSERT INTO Matiere (id_matiere, libelle, id_semestre, id_ue, optionnel) VALUES
+(37, 'INF204 Systeme information geographique', 4, 12, 1),
+(38, 'INF205 Systeme information', 4, 12, 1),
+(39, 'INF206 Interface Homme Machine', 4, 12, 1),
+(40, 'INF209 Web dynamique', 4, 12, 0),
+(41, 'INF212 Mini projet Web et design', 4, 12, 0),
+(42, 'MTH202 Analyse des donnees', 4, 10, 1),
+(43, 'MTH204 Geometrie', 4, 10, 1),
+(44, 'MTH206 Optimisation', 4, 10, 1),
+(45, 'MTH203 MAO', 4, 10, 0);
+
+/* Inscriptions (exemple pour S1 à S4, étudiants 1 à 4) */
 INSERT INTO Inscription (id_inscription, id_etudiant, id_annee, id_semestre) VALUES
 (1, 1, 1, 1),
 (2, 2, 1, 1),
 (3, 3, 1, 1),
 (4, 4, 1, 1),
-(5, 9, 1, 2),
-(6, 10,1, 2),
-(7, 1, 1, 2),
-(8, 2, 1, 2),
+(5, 1, 1, 2),
+(6, 2, 1, 2),
+(7, 3, 1, 2),
+(8, 4, 1, 2),
+(9, 1, 1, 3),
+(10,2, 1, 3),
+(11,3, 1, 3),
+(12,4, 1, 3),
+(13,1, 1, 4),
+(14,2, 1, 4),
+(15,3, 1, 4),
+(16,4, 1, 4);
 
-(9, 5, 2, 3),
-(10,6, 2, 3),
-(11,7, 2, 3),
-(12,8, 2, 4),
-(13,5, 2, 4),
-(14,6, 2, 4);
-
-
+/* Notes (exemple pour S1 à S4, étudiants 1 à 4, matières principales) */
+/* Notes S1 (id_matiere 1 à 6) */
 INSERT INTO Note (id_note, valeur, date_insertion, id_inscription, id_matiere) VALUES
 (1, 14.5, '2023-10-01', 1, 1),
 (2, 12.0, '2023-10-02', 1, 2),
-(3, 16.0, '2023-10-05', 1, 3),
-(4, 13.5, '2023-10-06', 1, 4),
+(3, 16.0, '2023-10-03', 1, 3),
+(4, 13.5, '2023-10-04', 1, 4),
+(5, 15.0, '2023-10-05', 1, 5),
+(6, 11.0, '2023-10-06', 1, 6),
 
-(5, 15.0, '2024-02-10', 7, 5),
-(6, 11.0, '2024-02-11', 7, 6),
-(7, 17.0, '2024-02-12', 7, 7),
-(8, 14.0, '2024-02-15', 7, 8),
+(7, 13.0, '2023-10-01', 2, 1),
+(8, 10.0, '2023-10-02', 2, 2),
+(9, 15.0, '2023-10-03', 2, 3),
+(10, 12.5, '2023-10-04', 2, 4),
+(11, 14.0, '2023-10-05', 2, 5),
+(12, 13.0, '2023-10-06', 2, 6),
 
-(9, 13.0, '2024-10-03', 9, 9),
-(10, 10.5, '2024-10-05', 9, 10),
-(11, 18.0, '2024-10-06', 9, 11),
-(12, 14.5, '2024-10-07', 9, 12),
+(13, 16.5, '2023-10-01', 3, 1),
+(14, 13.0, '2023-10-02', 3, 2),
+(15, 14.0, '2023-10-03', 3, 3),
+(16, 15.5, '2023-10-04', 3, 4),
+(17, 12.0, '2023-10-05', 3, 5),
+(18, 14.0, '2023-10-06', 3, 6),
 
-(13, 15.5, '2025-03-12', 13, 13),
-(14, 12.5, '2025-03-14', 13, 14),
-(15, 19.0, '2025-03-15', 13, 15),
-(16, 16.0, '2025-03-17', 13, 16),
+(19, 15.0, '2023-10-01', 4, 1),
+(20, 14.0, '2023-10-02', 4, 2),
+(21, 13.0, '2023-10-03', 4, 3),
+(22, 12.5, '2023-10-04', 4, 4),
+(23, 13.0, '2023-10-05', 4, 5),
+(24, 15.0, '2023-10-06', 4, 6);
 
-(17, 9.0, '2023-11-01', 2, 2),
-(18, 17.5, '2023-11-02', 2, 1),
-(19, 8.0, '2024-03-01', 8, 6),
-(20, 13.2, '2024-03-05', 8, 5),
+/* Notes S2 (id_matiere 7 à 12) */
+INSERT INTO Note (id_note, valeur, date_insertion, id_inscription, id_matiere) VALUES
+(25, 14.0, '2024-02-01', 5, 7),
+(26, 13.5, '2024-02-02', 5, 8),
+(27, 15.0, '2024-02-03', 5, 9),
+(28, 12.0, '2024-02-04', 5, 10),
+(29, 16.0, '2024-02-05', 5, 11),
+(30, 13.0, '2024-02-06', 5, 12),
 
-(21, 15.8, '2024-11-10', 10, 9),
-(22, 11.4, '2024-11-12', 10, 10),
-(23, 16.7, '2025-04-01', 14, 13),
-(24, 14.9, '2025-04-03', 14, 15),
+(31, 12.5, '2024-02-01', 6, 7),
+(32, 14.0, '2024-02-02', 6, 8),
+(33, 13.0, '2024-02-03', 6, 9),
+(34, 15.5, '2024-02-04', 6, 10),
+(35, 14.0, '2024-02-05', 6, 11),
+(36, 12.0, '2024-02-06', 6, 12),
 
-(25, 12.0, '2023-12-01', 3, 4),
-(26, 18.5, '2024-02-20', 3, 7),
-(27, 10.0, '2024-10-10', 11, 12),
-(28, 17.0, '2025-03-20', 11, 16),
+(37, 13.0, '2024-02-01', 7, 7),
+(38, 15.0, '2024-02-02', 7, 8),
+(39, 14.5, '2024-02-03', 7, 9),
+(40, 13.0, '2024-02-04', 7, 10),
+(41, 15.0, '2024-02-05', 7, 11),
+(42, 14.0, '2024-02-06', 7, 12),
 
-(29, 13.7, '2024-11-20', 12, 8),
-(30, 9.5, '2023-11-15', 4, 3),
-(31, 14.2, '2025-03-25', 4, 14),
-(32, 12.6, '2024-02-25', 4, 5);
+(43, 14.5, '2024-02-01', 8, 7),
+(44, 13.0, '2024-02-02', 8, 8),
+(45, 12.0, '2024-02-03', 8, 9),
+(46, 15.0, '2024-02-04', 8, 10),
+(47, 13.5, '2024-02-05', 8, 11),
+(48, 14.0, '2024-02-06', 8, 12);
 
-/* Matiere - Credit - Filiere (liaisons réalistes) */
+/* Notes S3 (id_matiere 13 à 18) */
+INSERT INTO Note (id_note, valeur, date_insertion, id_inscription, id_matiere) VALUES
+(49, 15.0, '2024-06-01', 9, 13),
+(50, 14.0, '2024-06-02', 9, 14),
+(51, 13.5, '2024-06-03', 9, 15),
+(52, 16.0, '2024-06-04', 9, 16),
+(53, 15.5, '2024-06-05', 9, 17),
+(54, 14.0, '2024-06-06', 9, 18),
+
+(55, 13.0, '2024-06-01', 10, 13),
+(56, 15.0, '2024-06-02', 10, 14),
+(57, 14.0, '2024-06-03', 10, 15),
+(58, 13.5, '2024-06-04', 10, 16),
+(59, 12.0, '2024-06-05', 10, 17),
+(60, 15.0, '2024-06-06', 10, 18),
+
+(61, 14.5, '2024-06-01', 11, 13),
+(62, 13.0, '2024-06-02', 11, 14),
+(63, 15.0, '2024-06-03', 11, 15),
+(64, 14.0, '2024-06-04', 11, 16),
+(65, 13.5, '2024-06-05', 11, 17),
+(66, 15.0, '2024-06-06', 11, 18),
+
+(67, 13.0, '2024-06-01', 12, 13),
+(68, 14.0, '2024-06-02', 12, 14),
+(69, 15.5, '2024-06-03', 12, 15),
+(70, 13.0, '2024-06-04', 12, 16),
+(71, 14.0, '2024-06-05', 12, 17),
+(72, 15.0, '2024-06-06', 12, 18);
+
+/* Notes S4 (id_matiere 19 à 27) */
+INSERT INTO Note (id_note, valeur, date_insertion, id_inscription, id_matiere) VALUES
+(73, 14.0, '2024-10-01', 13, 19),
+(74, 13.5, '2024-10-02', 13, 20),
+(75, 15.0, '2024-10-03', 13, 21),
+(76, 12.0, '2024-10-04', 13, 22),
+(77, 16.0, '2024-10-05', 13, 23),
+(78, 13.0, '2024-10-06', 13, 24),
+(79, 15.0, '2024-10-07', 13, 25),
+(80, 14.5, '2024-10-08', 13, 26),
+(81, 13.0, '2024-10-09', 13, 27),
+
+(82, 13.0, '2024-10-01', 14, 19),
+(83, 14.0, '2024-10-02', 14, 20),
+(84, 12.5, '2024-10-03', 14, 21),
+(85, 15.0, '2024-10-04', 14, 22),
+(86, 13.5, '2024-10-05', 14, 23),
+(87, 14.0, '2024-10-06', 14, 24),
+(88, 15.0, '2024-10-07', 14, 25),
+(89, 13.0, '2024-10-08', 14, 26),
+(90, 14.5, '2024-10-09', 14, 27),
+
+(91, 15.0, '2024-10-01', 15, 19),
+(92, 14.0, '2024-10-02', 15, 20),
+(93, 13.0, '2024-10-03', 15, 21),
+(94, 15.5, '2024-10-04', 15, 22),
+(95, 14.0, '2024-10-05', 15, 23),
+(96, 13.5, '2024-10-06', 15, 24),
+(97, 15.0, '2024-10-07', 15, 25),
+(98, 14.0, '2024-10-08', 15, 26),
+(99, 13.0, '2024-10-09', 15, 27),
+
+(100, 14.5, '2024-10-01', 16, 19),
+(101, 13.0, '2024-10-02', 16, 20),
+(102, 15.0, '2024-10-03', 16, 21),
+(103, 14.0, '2024-10-04', 16, 22),
+(104, 13.5, '2024-10-05', 16, 23),
+(105, 15.0, '2024-10-06', 16, 24),
+(106, 14.0, '2024-10-07', 16, 25),
+(107, 13.0, '2024-10-08', 16, 26),
+(108, 15.5, '2024-10-09', 16, 27);
+
+/* Matiere - Credit - Filiere (exemple) */
 INSERT INTO Matiere_Credit (id_matiere, id_credit, id_filiere) VALUES
 (1, 1, 1),
 (2, 1, 1),
@@ -249,4 +367,4 @@ INSERT INTO Matiere_Credit (id_matiere, id_credit, id_filiere) VALUES
 (13,1, 1),
 (14,2, 1),
 (15,1, 1),
-(16,1, 1); -- si nécessaire, adapte credit 8 ou remplace
+(16,1, 1);

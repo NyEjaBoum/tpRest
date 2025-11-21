@@ -55,7 +55,7 @@ export default {
   },
   methods: {
     async chargerSemestres() {
-      const res = await axios.get('http://localhost:8080/api/semestres/semestres')
+      const res = await axios.get('http://localhost:8080/api/semestres')
       this.semestres = res.data
     },
     async chargerEtudiants(semestre) {

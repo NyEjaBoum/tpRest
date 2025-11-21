@@ -21,7 +21,7 @@ public class SemestreController {
 
     private final SemestreService semestreService;
 
-    @GetMapping("/semestres")
+    @GetMapping
     public ResponseEntity<Map<String, Object>> findAll(){
         Map<String, Object> resp = semestreService.getAllSemestres();
         if ("error".equals(resp.get("status"))) {

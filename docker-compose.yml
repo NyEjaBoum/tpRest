@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   db:
     image: mysql:5.7
@@ -12,15 +14,15 @@ services:
       - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
-      - ./scriptNyeja.sql:/docker-entrypoint-initdb.d/scriptNyeja.sql:ro
+      - ./Back/scriptNyeja.sql:/docker-entrypoint-initdb.d/scriptNyeja.sql:ro
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-ptest"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-ptest"]
       interval: 5s
       timeout: 5s
       retries: 10
 
-  app:
-    build: .
+  back:
+    build: ./Back
     image: tprest-app:latest
     depends_on:
       db:
@@ -32,6 +34,17 @@ services:
       SPRING_DATASOURCE_USERNAME: tpuser
       SPRING_DATASOURCE_PASSWORD: tppass
       SPRING_JPA_HIBERNATE_DDL_AUTO: none
+    restart: unless-stopped
+
+  front:
+    build: ./Front
+    image: tpfront-app:latest
+    working_dir: /app
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./Front:/app
+    command: npm run dev
     restart: unless-stopped
 
 volumes:

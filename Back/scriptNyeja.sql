@@ -40,13 +40,26 @@ CREATE TABLE Etudiant(
    FOREIGN KEY(id_semestre) REFERENCES Semestre(id_semestre)
 );
 
+CREATE TABLE UE (
+  id_ue INT PRIMARY KEY,
+  libelle VARCHAR(100) NOT NULL
+);
+
 CREATE TABLE Matiere(
    id_matiere INT,
    libelle VARCHAR(50) NOT NULL,
    id_semestre INT NOT NULL,
+   id_ue INT,
+   optionnel INT(1) DEFAULT 0,
    PRIMARY KEY(id_matiere),
-   FOREIGN KEY(id_semestre) REFERENCES Semestre(id_semestre)
+   FOREIGN KEY(id_semestre) REFERENCES Semestre(id_semestre),
+   FOREIGN KEY(id_ue) REFERENCES UE(id_ue)
 );
+
+-- ALTER TABLE Matiere
+--   ADD COLUMN id_ue INT,
+--   ADD COLUMN optionnel TINYINT(1) DEFAULT 0,
+--   ADD FOREIGN KEY(id_ue) REFERENCES UE(id_ue);
 
 CREATE TABLE Note(
    id_note INT,

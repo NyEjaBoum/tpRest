@@ -20,6 +20,25 @@ public interface NoteRepository extends JpaRepository<Note, Integer> {
     @Query("SELECT n FROM Note n JOIN n.matiere m WHERE m.idMatiere = :matiereId")
     List<Note> findNotesByMatiereId(@Param("matiereId") Integer matiereId);
 
-    @Query("SELECT DISTINCT n FROM Note n JOIN n.matiere m, Inscription i WHERE i.semestre = m.semestre AND i.etudiant.idEtudiant = :etudiantId")
+    @Query("SELECT DISTINCT n FROM Note n " +
+        "JOIN n.matiere m " +
+        "JOIN Inscription i ON i.semestre = m.semestre AND i.etudiant.idEtudiant = :etudiantId " +
+        "WHERE i.etudiant.idEtudiant = :etudiantId")
     List<Note> findNotesByEtudiantId(@Param("etudiantId") Integer etudiantId);
+    @Query("""
+    SELECT n FROM Note n
+    JOIN n.inscription i
+    WHERE i.etudiant.idEtudiant = :etudiantId
+      AND i.semestre.idSemestre = :semestreId
+""")
+List<Note> findNotesByEtudiantAndSemestre(@Param("etudiantId") Integer etudiantId, @Param("semestreId") Integer semestreId);
+
+@Query("""
+    SELECT AVG(n.valeur) FROM Note n
+    JOIN n.inscription i
+    WHERE i.etudiant.idEtudiant = :etudiantId
+      AND i.semestre.idSemestre = :semestreId
+""")
+Double getMoyenneByEtudiantAndSemestre(@Param("etudiantId") Integer etudiantId, @Param("semestreId") Integer semestreId);
+
 }

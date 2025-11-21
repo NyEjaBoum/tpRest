@@ -20,6 +20,10 @@ public class Note {
     private String dateInsertion;
 
     @ManyToOne
+    @JoinColumn(name = "id_inscription", referencedColumnName = "id_inscription")
+    private Inscription inscription;
+
+    @ManyToOne
     @JoinColumn(name = "id_matiere", referencedColumnName = "id_matiere")
     private Matiere matiere;
 }

@@ -15,6 +15,15 @@ public class EtudiantController {
 
     private final EtudiantService etudiantService;
 
+    @GetMapping("/{id}/infos-moyennes")
+    public ResponseEntity<Map<String, Object>> getInfosEtudiantMoyennes(@PathVariable Integer id) {
+        Map<String, Object> resp = etudiantService.getInfosEtudiantMoyennes(id);
+        if ("error".equals(resp.get("status"))) {
+            return ResponseEntity.badRequest().body(resp);
+        }
+        return ResponseEntity.ok(resp);
+    }
+
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAll() {
         Map<String, Object> resp = etudiantService.getAllEtudiants();

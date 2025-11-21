@@ -4,6 +4,7 @@ import com.example.tpRest.service.NoteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.example.tpRest.repository.NoteRepository;
 
 import java.util.Map;
 
@@ -14,6 +15,9 @@ import java.util.Map;
 public class NoteController {
 
     private final NoteService noteService;
+
+    @Autowired
+    private NoteRepository noteRepository;
 
     @GetMapping("/semestres/{id}")
     public ResponseEntity<Map<String, Object>> getNotesBySemestre(@PathVariable Integer id) {

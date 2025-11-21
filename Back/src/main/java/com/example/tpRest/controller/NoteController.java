@@ -4,6 +4,7 @@ import com.example.tpRest.service.NoteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import com.example.tpRest.repository.NoteRepository;
 
 import java.util.Map;

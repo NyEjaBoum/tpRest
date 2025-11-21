@@ -18,6 +18,28 @@ public class NoteController {
 
     @Autowired
     private NoteRepository noteRepository;
+        @GetMapping("/etudiant/{etudiantId}/semestre/{semestreId}")
+    public ResponseEntity<Map<String, Object>> getReleveNotesEtudiantSemestre(
+            @PathVariable Integer etudiantId,
+            @PathVariable Integer semestreId) {
+        Map<String, Object> resp = noteService.getReleveNotesEtudiantSemestre(etudiantId, semestreId);
+        if ("error".equals(resp.get("status"))) {
+            return ResponseEntity.badRequest().body(resp);
+        }
+        return ResponseEntity.ok(resp);
+    }
+
+    // Notes d'un étudiant pour L1 (S1+S2) ou L2 (S3+S4)
+    @GetMapping("/etudiant/{etudiantId}/niveau/{niveau}")
+    public ResponseEntity<Map<String, Object>> getNotesEtudiantNiveau(
+            @PathVariable Integer etudiantId,
+            @PathVariable String niveau) {
+        Map<String, Object> resp = noteService.getNotesEtudiantNiveau(etudiantId, niveau);
+        if ("error".equals(resp.get("status"))) {
+            return ResponseEntity.badRequest().body(resp);
+        }
+        return ResponseEntity.ok(resp);
+    }
 
     @GetMapping("/semestres/{id}")
     public ResponseEntity<Map<String, Object>> getNotesBySemestre(@PathVariable Integer id) {

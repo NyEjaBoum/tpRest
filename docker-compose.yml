@@ -42,9 +42,7 @@ services:
     working_dir: /app
     ports:
       - "5173:5173"
-    volumes:
-      - ./Front:/app
-    command: npm run dev
+    command: npm run dev -- --host
     restart: unless-stopped
 
 volumes:

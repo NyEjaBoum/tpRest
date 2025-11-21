@@ -19,6 +19,33 @@ public class EtudiantService {
     private final EtudiantRepository etudiantRepository;
     private final NoteRepository noteRepository;
 
+        public Map<String, Object> getInfosEtudiantMoyennes(Integer etudiantId) {
+        Map<String, Object> resp = new HashMap<>();
+        try {
+            Etudiant etu = etudiantRepository.findById(etudiantId).orElse(null);
+            if (etu == null) {
+                resp.put("status", "error");
+                resp.put("data", null);
+                resp.put("error", Map.of("code", "E_NOT_FOUND", "message", "Etudiant introuvable"));
+                return resp;
+            }
+            Map<String, Double> moyennes = new HashMap<>();
+            for (int s = 1; s <= 4; s++) {
+                Double m = noteRepository.getMoyenneByEtudiantAndSemestre(etudiantId, s);
+                moyennes.put("S" + s, m);
+            }
+            resp.put("status", "success");
+            resp.put("data", Map.of("etudiant", etu, "moyennes", moyennes));
+            resp.put("error", null);
+            return resp;
+        } catch (Exception ex) {
+            resp.put("status", "error");
+            resp.put("data", null);
+            resp.put("error", Map.of("code", "E_INTERNAL", "message", ex.getMessage()));
+            return resp;
+        }
+    }
+
     public Map<String, Object> getAllEtudiants() {
         Map<String, Object> resp = new HashMap<>();
         try {
@@ -72,6 +99,8 @@ public class EtudiantService {
             return resp;
         }
     }
+
+    
 
     public Map<String, Object> getNotesByEtudiant(Integer etudiantId) {
         Map<String, Object> resp = new HashMap<>();
